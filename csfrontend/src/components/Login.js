@@ -1,5 +1,3 @@
-// frontend/src/components/Login.js
-
 import React, { useState } from 'react';
 import axiosInstance from '../axiosConfig';
 
@@ -23,18 +21,19 @@ function Login() {
             .then((res) => {
                 localStorage.setItem('access_token', res.data.access);
                 localStorage.setItem('refresh_token', res.data.refresh);
-                axiosInstance.defaults.headers['Authorization'] =
-                    'Bearer ' + res.data.access;
+                axiosInstance.defaults.headers['Authorization'] = 'Bearer ' + res.data.access;
+                window.location.href = "/view";
             })
             .catch((err) => {
                 console.error(err);
+                alert("Login failed. Please check your credentials and try again.");
             });
     };
 
     return (
         <form onSubmit={handleSubmit}>
-            <input type="text" name="username" onChange={handleChange} required />
-            <input type="password" name="password" onChange={handleChange} required />
+            <input type="text" name="username" placeholder="Username" onChange={handleChange} required />
+            <input type="password" name="password" placeholder="Password" onChange={handleChange} required />
             <button type="submit">Login</button>
         </form>
     );
