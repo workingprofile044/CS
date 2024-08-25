@@ -22,7 +22,7 @@ services:
     depends_on:
       - db
     environment:
-      - SECRET_KEY=django-insecure-f-6_7f^av0e*-=!f&m+x53s1ozws1vby&t@g$&nqeq4*7cf$(3
+      - SECRET_KEY=your-very-secret-key
       - DATABASE_URL=postgres://csuser:cspass@db:5432/csdb
       - DEBUG=1
 
