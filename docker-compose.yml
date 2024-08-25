@@ -22,7 +22,7 @@ services:
     depends_on:
       - db
     environment:
-      - DATABASE_URL=postgres://csuser:cspassd@db:5432/csdb
+      - DATABASE_URL=postgres://csuser:cspass@db:5432/csdb
       - DEBUG=1
 
   frontend:
