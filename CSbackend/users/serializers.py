@@ -1,9 +1,8 @@
-# users/serializers.py
-
 from rest_framework import serializers
 from .models import CustomUser
 from django.contrib.auth.password_validation import validate_password
-from ..storage.models import File
+from storage.models import File
+from django.db.models import Sum
 
 class RegisterSerializer(serializers.ModelSerializer):
     class Meta:
@@ -32,5 +31,5 @@ class AdminUserSerializer(serializers.ModelSerializer):
         fields = ['id', 'username', 'full_name', 'is_admin', 'file_count', 'storage_used']
 
     def get_storage_used(self, obj):
-        total_size = sum(file.size for file in File.objects.filter(user=obj))
-        return total_size / (1024 * 1024)  # Convert to MB
+        total_size = File.objects.filter(user=obj).aggregate(total_size=Sum('size'))['total_size'] or 0
+        return total_size / (1024 * 1024)  # Convert bytes to MB
