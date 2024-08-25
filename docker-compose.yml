@@ -1,4 +1,4 @@
-# docker-compose.yml
+version: '3.8'
 
 services:
   db:
@@ -17,6 +17,7 @@ services:
     command: gunicorn CSbackend.wsgi:application --bind 0.0.0.0:8000
     volumes:
       - ./CSbackend:/app
+      - static_volume:/app/staticfiles
     ports:
       - "8000:8000"
     depends_on:
@@ -39,3 +40,4 @@ services:
 
 volumes:
   postgres_data:
+  static_volume:
