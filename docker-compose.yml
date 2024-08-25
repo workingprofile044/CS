@@ -1,7 +1,5 @@
 # docker-compose.yml
 
-version: '3.8'
-
 services:
   db:
     image: postgres:16
@@ -13,7 +11,9 @@ services:
       POSTGRES_PASSWORD: cspass
 
   web:
-    build: .
+    build:
+      context: ./CSbackend
+      dockerfile: Dockerfile
     command: gunicorn CSbackend.wsgi:application --bind 0.0.0.0:8000
     volumes:
       - ./CSbackend:/app
@@ -28,6 +28,9 @@ services:
   frontend:
     build:
       context: ./csfrontend
+      dockerfile: Dockerfile
+    volumes:
+      - ./csfrontend:/app
     ports:
       - "3000:80"
     depends_on:
