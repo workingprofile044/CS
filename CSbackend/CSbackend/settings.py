@@ -144,3 +144,7 @@ SESSION_COOKIE_SECURE = False
 X_FRAME_OPTIONS = 'SAMEORIGIN'
 
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+
+CORS_ALLOWED_ORIGINS = [
+    "http://89.111.175.161:3000",
+]
