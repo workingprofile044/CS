@@ -8,6 +8,7 @@ function Login({ onLogin }) {
         username: '',
         password: '',
     });
+    const [isLoading, setIsLoading] = useState(false);
 
     const handleChange = (e) => {
         setFormData({
@@ -18,6 +19,7 @@ function Login({ onLogin }) {
 
     const handleSubmit = (e) => {
         e.preventDefault();
+        setIsLoading(true);
         axiosInstance
             .post('/api/users/login/', formData)
             .then((res) => {
@@ -29,15 +31,35 @@ function Login({ onLogin }) {
             })
             .catch((err) => {
                 console.error(err);
-                alert("Login failed. Please check your credentials and try again.");
+                const errorMessage = err.response?.data?.detail || "Login failed. Please check your credentials and try again.";
+                alert(errorMessage);
+            })
+            .finally(() => {
+                setIsLoading(false);
             });
     };
 
     return (
         <form onSubmit={handleSubmit}>
-            <input type="text" name="username" placeholder="Username" onChange={handleChange} required />
-            <input type="password" name="password" placeholder="Password" onChange={handleChange} required />
-            <button type="submit">Login</button>
+            <input
+                type="text"
+                name="username"
+                placeholder="Username"
+                onChange={handleChange}
+                value={formData.username}
+                required
+            />
+            <input
+                type="password"
+                name="password"
+                placeholder="Password"
+                onChange={handleChange}
+                value={formData.password}
+                required
+            />
+            <button type="submit" disabled={isLoading}>
+                {isLoading ? 'Logging in...' : 'Login'}
+            </button>
         </form>
     );
 }
