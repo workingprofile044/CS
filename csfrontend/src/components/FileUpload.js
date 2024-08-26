@@ -4,7 +4,7 @@ import axiosInstance from '../axiosConfig';
 function FileUpload() {
     const [file, setFile] = useState(null);
     const [comment, setComment] = useState('');
-    const [uploadSuccess, setUploadSuccess] = useState(false);
+    const [successMessage, setSuccessMessage] = useState('');
 
     const handleFileChange = (e) => {
         setFile(e.target.files[0]);
@@ -16,21 +16,20 @@ function FileUpload() {
 
     const handleSubmit = (e) => {
         e.preventDefault();
+        setSuccessMessage(''); // Clear previous messages
         const formData = new FormData();
         formData.append('file', file);
         formData.append('comment', comment);
 
         axiosInstance
-            .post('/api/storage/upload/', formData, {
-                headers: {
-                    'Content-Type': 'multipart/form-data',
-                },
-            })
+            .post('api/storage/upload/', formData)
             .then((res) => {
+                setSuccessMessage('Your file has been uploaded successfully!');
                 console.log('File uploaded successfully:', res.data);
             })
             .catch((err) => {
                 console.error('File upload error:', err);
+                setSuccessMessage('Failed to upload your file. Please try again.');
             });
     };
 
@@ -46,7 +45,7 @@ function FileUpload() {
                 />
                 <button type="submit">Upload</button>
             </form>
-            {uploadSuccess && <p>File uploaded successfully!</p>}
+            {successMessage && <p>{successMessage}</p>}
         </div>
     );
 }

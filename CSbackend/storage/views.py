@@ -7,6 +7,7 @@ from .models import File
 from .serializers import FileSerializer
 from django.conf import settings
 from django.core.exceptions import ValidationError
+from django.http import FileResponse, Http404
 
 class FileListView(generics.ListAPIView):
     serializer_class = FileSerializer
@@ -79,3 +80,15 @@ class FileRenameView(APIView):
             return Response(status=status.HTTP_404_NOT_FOUND)
         except ValidationError as e:
             return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+
+    class FileDownloadView(APIView):
+        permission_classes = [permissions.IsAuthenticated]
+
+        def get(self, request, pk, *args, **kwargs):
+            try:
+                file = File.objects.get(pk=pk, user=request.user)
+                response = FileResponse(open(file.file_path, 'rb'))
+                response['Content-Disposition'] = f'attachment; filename="{file.original_name}"'
+                return response
+            except File.DoesNotExist:
+                raise Http404
