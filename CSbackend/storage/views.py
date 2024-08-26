@@ -22,6 +22,9 @@ class FileUploadView(generics.CreateAPIView):
     parser_classes = (MultiPartParser, FormParser)
     permission_classes = [permissions.IsAuthenticated]
 
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
+
     def post(self, request, *args, **kwargs):
         file_obj = request.data['file']
         user = request.user

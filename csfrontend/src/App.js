@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import Home from './components/Home';
 import Register from './components/Register';
 import Login from './components/Login';
@@ -17,11 +17,11 @@ function App() {
                 <Navigation isAuthenticated={isAuthenticated} />
                 <Routes>
                     <Route path="/" element={<Home />} />
-                    <Route path="/register" element={<Register />} />
-                    <Route path="/login" element={<Login />} />
-                    <Route path="/upload" element={<FileUpload />} />
-                    <Route path="/files" element={<FileList />} />
-                    <Route path="/logout" element={<Logout />} />
+                    <Route path="/register" element={isAuthenticated ? <Navigate to="/files" /> : <Register />} />
+                    <Route path="/login" element={isAuthenticated ? <Navigate to="/files" /> : <Login />} />
+                    <Route path="/upload" element={isAuthenticated ? <FileUpload /> : <Navigate to="/login" />} />
+                    <Route path="/files" element={isAuthenticated ? <FileList /> : <Navigate to="/login" />} />
+                    <Route path="/logout" element={isAuthenticated ? <Logout /> : <Navigate to="/login" />} />
                 </Routes>
             </div>
         </Router>

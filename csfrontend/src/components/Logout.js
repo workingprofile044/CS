@@ -3,7 +3,7 @@ import axiosInstance from '../axiosConfig';
 import { useNavigate } from 'react-router-dom';
 
 function Logout() {
-    const history = useNavigate();
+    const navigate = useNavigate();
 
     const handleLogout = () => {
         const refreshToken = localStorage.getItem('refresh_token');
@@ -13,11 +13,10 @@ function Logout() {
                 localStorage.removeItem('access_token');
                 localStorage.removeItem('refresh_token');
                 axiosInstance.defaults.headers['Authorization'] = null;
-                history.push('/login');  // Redirect to login page
+                navigate('/login');
             })
             .catch((err) => {
                 console.error('Logout failed:', err);
-                // Optionally, provide user feedback here
             });
     };
 
@@ -25,4 +24,3 @@ function Logout() {
 }
 
 export default Logout;
-
