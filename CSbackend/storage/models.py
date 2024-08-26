@@ -1,5 +1,5 @@
-# storage/models.py
-
+import os
+import uuid
 from django.db import models
 from django.conf import settings
 
@@ -10,8 +10,10 @@ class File(models.Model):
     size = models.PositiveIntegerField()
     upload_date = models.DateTimeField(auto_now_add=True)
     last_download_date = models.DateTimeField(null=True, blank=True)
-    comment = models.TextField(blank=True, null=True)
-    special_link = models.CharField(max_length=255, unique=True)
+    comment = models.TextField(blank=True)
+    special_link = models.CharField(max_length=32, unique=True, default=uuid.uuid4().hex, editable=False)
 
-    def __str__(self):
-        return self.original_name
+    def save(self, *args, **kwargs):
+        if not self.special_link:
+            self.special_link = uuid.uuid4().hex
+        super().save(*args, **kwargs)
