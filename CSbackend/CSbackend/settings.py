@@ -165,10 +165,6 @@ X_FRAME_OPTIONS = 'SAMEORIGIN'
 
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
-CORS_ALLOWED_ORIGINS = [
-    "http://89.111.175.161:3000",
-]
-
 CORS_ALLOW_ALL_ORIGINS = True
 
 CORS_ALLOW_CREDENTIALS = True
