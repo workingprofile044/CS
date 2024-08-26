@@ -5,6 +5,7 @@ function FileUpload() {
     const [file, setFile] = useState(null);
     const [comment, setComment] = useState('');
     const [successMessage, setSuccessMessage] = useState('');
+    const [isUploading, setIsUploading] = useState(false);
 
     const handleFileChange = (e) => {
         setFile(e.target.files[0]);
@@ -16,7 +17,9 @@ function FileUpload() {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        setSuccessMessage(''); // Clear previous messages
+        setSuccessMessage('');
+        setIsUploading(true);
+
         const formData = new FormData();
         formData.append('file', file);
         formData.append('comment', comment);
@@ -29,7 +32,13 @@ function FileUpload() {
             })
             .catch((err) => {
                 console.error('File upload error:', err);
-                setSuccessMessage('Failed to upload your file. Please try again.');
+                const errorMessage = err.response && err.response.data && err.response.data.detail
+                    ? err.response.data.detail
+                    : 'Failed to upload your file. Please try again.';
+                setSuccessMessage(errorMessage);
+            })
+            .finally(() => {
+                setIsUploading(false);
             });
     };
 
@@ -43,7 +52,9 @@ function FileUpload() {
                     onChange={handleCommentChange}
                     placeholder="Comment"
                 />
-                <button type="submit">Upload</button>
+                <button type="submit" disabled={isUploading}>
+                    {isUploading ? 'Uploading...' : 'Upload'}
+                </button>
             </form>
             {successMessage && <p>{successMessage}</p>}
         </div>
