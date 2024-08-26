@@ -29,6 +29,9 @@ function FileUpload() {
             .then((res) => {
                 setSuccessMessage('Your file has been uploaded successfully!');
                 console.log('File uploaded successfully:', res.data);
+                // Clear the form after a successful upload
+                setFile(null);
+                setComment('');
             })
             .catch((err) => {
                 console.error('File upload error:', err);
@@ -45,20 +48,31 @@ function FileUpload() {
     return (
         <div>
             <form onSubmit={handleSubmit}>
-                <input type="file" onChange={handleFileChange} required />
+                <input
+                    type="file"
+                    onChange={handleFileChange}
+                    required
+                    className="form-control mb-2"
+                />
                 <input
                     type="text"
                     value={comment}
                     onChange={handleCommentChange}
                     placeholder="Comment"
+                    className="form-control mb-2"
                 />
-                <button type="submit" disabled={isUploading}>
+                <button
+                    type="submit"
+                    disabled={isUploading}
+                    className="btn btn-primary"
+                >
                     {isUploading ? 'Uploading...' : 'Upload'}
                 </button>
             </form>
-            {successMessage && <p>{successMessage}</p>}
+            {successMessage && <p className="mt-2">{successMessage}</p>}
         </div>
     );
 }
 
 export default FileUpload;
+
