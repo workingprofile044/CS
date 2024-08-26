@@ -19,11 +19,12 @@ class RegisterSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         user = CustomUser.objects.create_user(
             username=validated_data['username'],
-            full_name=validated_data['full_name'],
-            email=validated_data['email'],
+            full_name=validated_data.get('full_name', ''),
+            email=validated_data.get('email', ''),
             password=validated_data['password'],
         )
         return user
+
 
 class AdminUserSerializer(serializers.ModelSerializer):
     file_count = serializers.IntegerField(source='file_set.count', read_only=True)
@@ -36,7 +37,6 @@ class AdminUserSerializer(serializers.ModelSerializer):
     def get_storage_used(self, obj):
         total_size = File.objects.filter(user=obj).aggregate(total_size=Sum('size'))['total_size'] or 0
         return total_size / (1024 * 1024)  # Convert bytes to MB
-
 
 
 class LoginSerializer(serializers.Serializer):

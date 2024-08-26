@@ -179,3 +179,5 @@ CORS_ALLOW_HEADERS = [
     'Referer',
     'User-Agent',
 ]
+
+AUTH_USER_MODEL = 'users.CustomUser'
