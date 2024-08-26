@@ -1,4 +1,5 @@
 import os
+import logging
 from rest_framework import generics, permissions, status
 from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework.views import APIView
@@ -10,6 +11,10 @@ from django.core.exceptions import ValidationError
 from django.http import FileResponse, Http404
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
+
+logger = logging.getLogger(__name__)
+
+
 
 class FileListView(generics.ListAPIView):
     serializer_class = FileSerializer
@@ -24,16 +29,25 @@ class FileUploadView(generics.CreateAPIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def perform_create(self, serializer):
-        file_obj = self.request.data['file']
+        logger.debug(f"Request data: {self.request.data}")
+        logger.debug(f"Request files: {self.request.FILES}")
+
+        file_obj = self.request.data.get('file')
+        if not file_obj:
+            logger.error("No file found in request data.")
+            raise ValidationError("No file found in the request data.")
+
         user = self.request.user
         file_path = os.path.join(settings.MEDIA_ROOT, user.username, file_obj.name)
 
         os.makedirs(os.path.dirname(file_path), exist_ok=True)
 
+        # Save file to disk
         with open(file_path, 'wb+') as destination:
             for chunk in file_obj.chunks():
                 destination.write(chunk)
 
+        # Save file details in the database
         serializer.save(
             user=user,
             original_name=file_obj.name,
