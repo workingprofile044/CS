@@ -1,36 +1,31 @@
-import React from 'react';
-import axiosInstance from '../axiosConfig';
+import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 function Logout({ onLogout }) {
     const navigate = useNavigate();
 
-    const handleLogout = () => {
+    useEffect(() => {
         const refreshToken = localStorage.getItem('refresh_token');
         if (!refreshToken) {
-            alert('No refresh token found.');
-            return;
+            navigate('/login');
+        } else {
+            axiosInstance
+                .post('/api/users/logout/', { refresh_token: refreshToken })
+                .then(() => {
+                    localStorage.removeItem('access_token');
+                    localStorage.removeItem('refresh_token');
+                    axiosInstance.defaults.headers['Authorization'] = null;
+                    onLogout();
+                    navigate('/login');
+                })
+                .catch((err) => {
+                    console.error('Logout failed:', err);
+                    navigate('/login');
+                });
         }
+    }, [navigate, onLogout]);
 
-        axiosInstance
-            .post('/api/users/logout/', { refresh: refreshToken }, {
-                headers: {
-                    'Content-Type': 'application/json'
-                }
-            })
-            .then(() => {
-                localStorage.removeItem('access_token');
-                localStorage.removeItem('refresh_token');
-                axiosInstance.defaults.headers['Authorization'] = null;
-                onLogout();
-                navigate('/login');
-            })
-            .catch((err) => {
-                console.error('Logout failed:', err);
-            });
-    };
-
-    return <button onClick={handleLogout}>Logout</button>;
+    return <p>Logging out...</p>;
 }
 
 export default Logout;
