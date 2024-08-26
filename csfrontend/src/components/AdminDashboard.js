@@ -7,14 +7,14 @@ function AdminDashboard() {
     const [users, setUsers] = useState([]);
 
     useEffect(() => {
-        axiosInstance.get('users/admin-list/').then((res) => {
+        axiosInstance.get('api/users/admin-list/').then((res) => {
             setUsers(res.data);
         });
     }, []);
 
     const handleAdminToggle = (userId, isAdmin) => {
         axiosInstance
-            .patch(`users/${userId}/`, { is_admin: !isAdmin })
+            .patch(`api/users/${userId}/`, { is_admin: !isAdmin })
             .then((res) => {
                 setUsers(users.map((user) => (user.id === userId ? res.data : user)));
             });

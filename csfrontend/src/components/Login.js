@@ -17,7 +17,7 @@ function Login() {
     const handleSubmit = (e) => {
         e.preventDefault();
         axiosInstance
-            .post('users/login/', formData)
+            .post('/api/users/login/', formData)
             .then((res) => {
                 localStorage.setItem('access_token', res.data.access);
                 localStorage.setItem('refresh_token', res.data.refresh);

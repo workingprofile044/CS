@@ -7,7 +7,7 @@ function FileList() {
     const [files, setFiles] = useState([]);
 
     useEffect(() => {
-        axiosInstance.get('storage/files/').then((res) => {
+        axiosInstance.get('api/storage/files/').then((res) => {
             setFiles(res.data);
         });
     }, []);

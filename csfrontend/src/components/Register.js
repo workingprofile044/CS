@@ -19,7 +19,7 @@ function Register() {
     const handleSubmit = (e) => {
         e.preventDefault();
         axiosInstance
-            .post('users/register/', formData)
+            .post('api/users/register/', formData)
             .then((res) => {
                 console.log(res.data);
                 window.location.href = "/login";
