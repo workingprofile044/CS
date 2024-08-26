@@ -1,5 +1,3 @@
-# storage/views.py
-
 import os
 from rest_framework import generics, permissions, status
 from rest_framework.parsers import MultiPartParser, FormParser
@@ -8,6 +6,7 @@ from rest_framework.response import Response
 from .models import File
 from .serializers import FileSerializer
 from django.conf import settings
+from django.core.exceptions import ValidationError
 
 class FileListView(generics.ListAPIView):
     serializer_class = FileSerializer
@@ -51,7 +50,8 @@ class FileDeleteView(APIView):
     def delete(self, request, pk, *args, **kwargs):
         try:
             file = File.objects.get(pk=pk, user=request.user)
-            os.remove(file.file_path)
+            if os.path.exists(file.file_path):
+                os.remove(file.file_path)
             file.delete()
             return Response(status=status.HTTP_204_NO_CONTENT)
         except File.DoesNotExist:
@@ -66,11 +66,16 @@ class FileRenameView(APIView):
             new_name = request.data.get('new_name', None)
             if new_name:
                 new_path = os.path.join(os.path.dirname(file.file_path), new_name)
-                os.rename(file.file_path, new_path)
-                file.original_name = new_name
-                file.file_path = new_path
-                file.save()
-                return Response(FileSerializer(file).data)
+                if os.path.exists(file.file_path):
+                    os.rename(file.file_path, new_path)
+                    file.original_name = new_name
+                    file.file_path = new_path
+                    file.save()
+                    return Response(FileSerializer(file).data)
+                else:
+                    raise ValidationError("File does not exist on the server.")
             return Response(status=status.HTTP_400_BAD_REQUEST)
         except File.DoesNotExist:
             return Response(status=status.HTTP_404_NOT_FOUND)
+        except ValidationError as e:
+            return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
