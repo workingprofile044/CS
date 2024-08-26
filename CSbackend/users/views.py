@@ -9,6 +9,7 @@ from rest_framework.decorators import api_view
 from .serializers import LoginSerializer
 
 
+
 class RegisterView(generics.CreateAPIView):
     queryset = CustomUser.objects.all()
     serializer_class = RegisterSerializer
@@ -27,16 +28,15 @@ class LoginView(APIView):
         return Response(serializer.errors, status=status.HTTP_401_UNAUTHORIZED)
 
 class LogoutView(APIView):
-    permission_classes = [permissions.IsAuthenticated]
-
-    def post(self, request, *args, **kwargs):
+    def post(self, request):
         try:
-            refresh_token = request.data["refresh_token"]
+            refresh_token = request.data['refresh_token']
             token = RefreshToken(refresh_token)
             token.blacklist()
-            return Response(status=205)
+
+            return Response(status=status.HTTP_205_RESET_CONTENT)
         except Exception as e:
-            return Response(status=400)
+            return Response(status=status.HTTP_400_BAD_REQUEST)
 
 class AdminUserListView(generics.ListAPIView):
     permission_classes = [permissions.IsAdminUser]
