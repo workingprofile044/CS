@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axiosInstance from '../axiosConfig';
 
-function Login() {
+function Login({ onLogin }) {
     const navigate = useNavigate();
     const [formData, setFormData] = useState({
         username: '',
@@ -24,6 +24,7 @@ function Login() {
                 localStorage.setItem('access_token', res.data.access);
                 localStorage.setItem('refresh_token', res.data.refresh);
                 axiosInstance.defaults.headers['Authorization'] = 'Bearer ' + res.data.access;
+                onLogin();
                 navigate("/files");
             })
             .catch((err) => {

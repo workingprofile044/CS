@@ -2,7 +2,7 @@ import React from 'react';
 import axiosInstance from '../axiosConfig';
 import { useNavigate } from 'react-router-dom';
 
-function Logout() {
+function Logout({ onLogout }) {
     const navigate = useNavigate();
 
     const handleLogout = () => {
@@ -13,6 +13,7 @@ function Logout() {
                 localStorage.removeItem('access_token');
                 localStorage.removeItem('refresh_token');
                 axiosInstance.defaults.headers['Authorization'] = null;
+                onLogout();
                 navigate('/login');
             })
             .catch((err) => {
