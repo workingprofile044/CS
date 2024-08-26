@@ -27,7 +27,7 @@ function FileUpload() {
         formData.append('comment', comment);
 
         axiosInstance
-            .post('storage/upload/', formData)
+            .post('api/storage/upload/', formData)
             .then((res) => {
                 setSuccessMessage('Your file has been uploaded successfully!');
                 setErrorMessage('');
