@@ -3,6 +3,9 @@ from .models import CustomUser
 from django.contrib.auth.password_validation import validate_password
 from storage.models import File
 from django.db.models import Sum
+from django.contrib.auth import authenticate
+from django.utils.translation import gettext_lazy as _
+from rest_framework.exceptions import AuthenticationFailed
 
 class RegisterSerializer(serializers.ModelSerializer):
     class Meta:
@@ -33,3 +36,30 @@ class AdminUserSerializer(serializers.ModelSerializer):
     def get_storage_used(self, obj):
         total_size = File.objects.filter(user=obj).aggregate(total_size=Sum('size'))['total_size'] or 0
         return total_size / (1024 * 1024)  # Convert bytes to MB
+
+
+
+class LoginSerializer(serializers.Serializer):
+    username = serializers.CharField()
+    password = serializers.CharField(
+        style={'input_type': 'password'}, trim_whitespace=False
+    )
+
+    def validate(self, data):
+        username = data.get('username')
+        password = data.get('password')
+
+        if username and password:
+            user = authenticate(request=self.context.get('request'),
+                                username=username, password=password)
+
+            if not user:
+                raise AuthenticationFailed(_('Invalid credentials'), code='authorization')
+
+        else:
+            raise serializers.ValidationError(
+                _('Must include "username" and "password".'), code='authorization'
+            )
+
+        data['user'] = user
+        return data
