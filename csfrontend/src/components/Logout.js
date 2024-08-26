@@ -7,8 +7,17 @@ function Logout({ onLogout }) {
 
     const handleLogout = () => {
         const refreshToken = localStorage.getItem('refresh_token');
+        if (!refreshToken) {
+            alert('No refresh token found.');
+            return;
+        }
+
         axiosInstance
-            .post('/api/users/logout/', { refresh_token: refreshToken })
+            .post('/api/users/logout/', { refresh: refreshToken }, {
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
             .then(() => {
                 localStorage.removeItem('access_token');
                 localStorage.removeItem('refresh_token');
