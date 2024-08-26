@@ -16,28 +16,21 @@ function FileUpload() {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-
-        if (!file) {
-            alert("Please select a file to upload.");
-            return;
-        }
-
         const formData = new FormData();
         formData.append('file', file);
         formData.append('comment', comment);
 
         axiosInstance
-            .post('/api/storage/upload/', formData)
+            .post('/api/storage/upload/', formData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data',
+                },
+            })
             .then((res) => {
                 console.log('File uploaded successfully:', res.data);
-                setUploadSuccess(true);
-                // Reset form
-                setFile(null);
-                setComment('');
             })
             .catch((err) => {
                 console.error('File upload error:', err);
-                setUploadSuccess(false);
             });
     };
 
