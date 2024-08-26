@@ -1,3 +1,4 @@
+import os
 import uuid
 from django.db import models
 from django.conf import settings
@@ -21,3 +22,6 @@ class File(models.Model):
             self.special_link = uuid.uuid4().hex
 
         super().save(*args, **kwargs)
+
+    def __str__(self):
+        return f"{self.original_name} uploaded by {self.user.username}"

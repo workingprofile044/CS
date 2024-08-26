@@ -16,8 +16,7 @@ class FileListView(generics.ListAPIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def get_queryset(self):
-        user = self.request.user
-        return File.objects.filter(user=user)
+        return File.objects.filter(user=self.request.user)
 
 class FileUploadView(generics.CreateAPIView):
     serializer_class = FileSerializer
@@ -25,28 +24,23 @@ class FileUploadView(generics.CreateAPIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def perform_create(self, serializer):
-        serializer.save(user=self.request.user)
-
-    def post(self, request, *args, **kwargs):
-        file_obj = request.data['file']
-        user = request.user
+        file_obj = self.request.data['file']
+        user = self.request.user
         file_path = os.path.join(settings.MEDIA_ROOT, user.username, file_obj.name)
 
         os.makedirs(os.path.dirname(file_path), exist_ok=True)
+
         with open(file_path, 'wb+') as destination:
             for chunk in file_obj.chunks():
                 destination.write(chunk)
 
-        file_instance = File.objects.create(
+        serializer.save(
             user=user,
             original_name=file_obj.name,
             file_path=file_path,
             size=file_obj.size,
-            comment=request.data.get('comment', ''),
+            comment=self.request.data.get('comment', ''),
         )
-
-        serializer = FileSerializer(file_instance, context={'request': request})
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 class FileDeleteView(APIView):
     permission_classes = [permissions.IsAuthenticated]
@@ -75,7 +69,7 @@ class FileRenameView(APIView):
                     file.original_name = new_name
                     file.file_path = new_path
                     file.save()
-                    return Response(FileSerializer(file).data)
+                    return Response(FileSerializer(file, context={'request': request}).data)
                 else:
                     raise ValidationError("File does not exist on the server.")
             return Response(status=status.HTTP_400_BAD_REQUEST)
@@ -83,7 +77,6 @@ class FileRenameView(APIView):
             return Response(status=status.HTTP_404_NOT_FOUND)
         except ValidationError as e:
             return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
-
 
 class FileDownloadView(APIView):
     permission_classes = [permissions.IsAuthenticated]
@@ -96,7 +89,6 @@ class FileDownloadView(APIView):
             return response
         except File.DoesNotExist:
             raise Http404
-
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])

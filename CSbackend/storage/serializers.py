@@ -6,7 +6,7 @@ class FileSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = File
-        fields = ('id', 'original_name', 'size', 'comment', 'download_url')
+        fields = ('id', 'user', 'original_name', 'size', 'comment', 'download_url')
 
     def get_download_url(self, obj):
         request = self.context.get('request')
