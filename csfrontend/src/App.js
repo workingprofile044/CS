@@ -1,19 +1,20 @@
 import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
+import Navigation from './components/Navigation';
 import Home from './components/Home';
 import Register from './components/Register';
 import Login from './components/Login';
 import FileUpload from './components/FileUpload';
 import FileList from './components/FileList';
 import Logout from './components/Logout';
-import Navigation from './components/Navigation';
 
 function App() {
     const [isAuthenticated, setIsAuthenticated] = useState(false);
 
     useEffect(() => {
-        const accessToken = localStorage.getItem('access_token');
-        if (accessToken) {
+        // Check if the access token is present in localStorage
+        const token = localStorage.getItem('access_token');
+        if (token) {
             setIsAuthenticated(true);
         }
     }, []);
