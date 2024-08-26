@@ -43,7 +43,8 @@ class FileUploadView(generics.CreateAPIView):
             comment=request.data.get('comment', ''),
         )
 
-        return Response(FileSerializer(file_instance).data, status=status.HTTP_201_CREATED)
+        serializer = FileSerializer(file_instance, context={'request': request})
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 class FileDeleteView(APIView):
     permission_classes = [permissions.IsAuthenticated]
