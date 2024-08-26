@@ -31,8 +31,7 @@ function Login({ onLogin }) {
             })
             .catch((err) => {
                 console.error(err);
-                const errorMessage = err.response?.data?.detail || "Login failed. Please check your credentials and try again.";
-                alert(errorMessage);
+                alert("Login failed. Please check your credentials and try again.");
             })
             .finally(() => {
                 setIsLoading(false);
