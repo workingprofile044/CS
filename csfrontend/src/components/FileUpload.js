@@ -25,11 +25,14 @@ function FileUpload() {
         formData.append('comment', comment);
 
         axiosInstance
-            .post('api/storage/upload/', formData)
+            .post('api/storage/upload/', formData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data'
+                }
+            })
             .then((res) => {
                 setSuccessMessage('Your file has been uploaded successfully!');
                 console.log('File uploaded successfully:', res.data);
-                // Clear the form after a successful upload
                 setFile(null);
                 setComment('');
             })
