@@ -1,9 +1,9 @@
 import React from 'react';
 import axiosInstance from '../axiosConfig';
-import { useHistory } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 function Logout() {
-    const history = useHistory();
+    const history = useNavigate();
 
     const handleLogout = () => {
         const refreshToken = localStorage.getItem('refresh_token');

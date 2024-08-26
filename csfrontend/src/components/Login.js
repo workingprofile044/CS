@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axiosInstance from '../axiosConfig';
 
@@ -24,7 +24,7 @@ function Login() {
                 localStorage.setItem('access_token', res.data.access);
                 localStorage.setItem('refresh_token', res.data.refresh);
                 axiosInstance.defaults.headers['Authorization'] = 'Bearer ' + res.data.access;
-                navigate("/files"); // Redirect to files page
+                navigate("/files");
             })
             .catch((err) => {
                 console.error(err);
