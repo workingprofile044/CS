@@ -9,13 +9,15 @@ import FileList from './components/FileList';
 import Logout from './components/Logout';
 
 function App() {
-    const [isAuthenticated, setIsAuthenticated] = useState(false);
+    const [isAuthenticated, setIsAuthenticated] = useState(!!localStorage.getItem('access_token'));
 
     useEffect(() => {
-        // Check if the access token is present in localStorage
         const token = localStorage.getItem('access_token');
         if (token) {
+            axiosInstance.defaults.headers['Authorization'] = 'Bearer ' + token;
             setIsAuthenticated(true);
+        } else {
+            setIsAuthenticated(false);
         }
     }, []);
 
@@ -37,7 +39,7 @@ function App() {
                     <Route path="/login" element={<Login onLogin={handleLogin} />} />
                     <Route path="/upload" element={isAuthenticated ? <FileUpload /> : <Navigate to="/login" />} />
                     <Route path="/files" element={isAuthenticated ? <FileList /> : <Navigate to="/login" />} />
-                    <Route path="/logout" element={isAuthenticated ? <Logout onLogout={handleLogout} /> : <Navigate to="/login" />} />
+                    <Route path="/logout" element={<Logout onLogout={handleLogout} />} />
                 </Routes>
             </div>
         </Router>

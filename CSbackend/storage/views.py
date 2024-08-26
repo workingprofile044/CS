@@ -8,6 +8,8 @@ from .serializers import FileSerializer
 from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.http import FileResponse, Http404
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.permissions import IsAuthenticated
 
 class FileListView(generics.ListAPIView):
     serializer_class = FileSerializer
@@ -94,3 +96,9 @@ class FileDownloadView(APIView):
             return response
         except File.DoesNotExist:
             raise Http404
+
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def test_auth(request):
+    return Response({"detail": "Authenticated!"})

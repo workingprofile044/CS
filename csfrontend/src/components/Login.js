@@ -10,6 +10,18 @@ function Login({ onLogin }) {
     });
     const [isLoading, setIsLoading] = useState(false);
 
+    function handleLogin(response) {
+        localStorage.setItem('access_token', response.data.access);
+        localStorage.setItem('refresh_token', response.data.refresh);
+        axiosInstance.defaults.headers['Authorization'] = 'Bearer ' + response.data.access;
+
+        console.log('Access Token:', localStorage.getItem('access_token'));
+        console.log('Refresh Token:', localStorage.getItem('refresh_token'));
+
+        onLogin(true);  // Pass true to update the authenticated state
+        navigate("/files");
+    }
+
     const handleChange = (e) => {
         setFormData({
             ...formData,

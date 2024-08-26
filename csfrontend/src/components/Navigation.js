@@ -2,6 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 
 function Navigation({ isAuthenticated }) {
+    console.log('isAuthenticated:', isAuthenticated);
     return (
         <nav>
             <a href="/">Home</a>
