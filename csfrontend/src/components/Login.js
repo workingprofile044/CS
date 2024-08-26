@@ -1,7 +1,9 @@
-import React, { useState } from 'react';
+import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import axiosInstance from '../axiosConfig';
 
 function Login() {
+    const navigate = useNavigate();
     const [formData, setFormData] = useState({
         username: '',
         password: '',
@@ -22,7 +24,7 @@ function Login() {
                 localStorage.setItem('access_token', res.data.access);
                 localStorage.setItem('refresh_token', res.data.refresh);
                 axiosInstance.defaults.headers['Authorization'] = 'Bearer ' + res.data.access;
-                window.location.href = "/files";
+                navigate("/files"); // Redirect to files page
             })
             .catch((err) => {
                 console.error(err);

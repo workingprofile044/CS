@@ -1,24 +1,32 @@
-// frontend/src/components/AdminDashboard.js
-
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import axiosInstance from '../axiosConfig';
 
 function AdminDashboard() {
     const [users, setUsers] = useState([]);
 
     useEffect(() => {
-        axiosInstance.get('api/users/admin-list/').then((res) => {
-            setUsers(res.data);
-        });
+        axiosInstance
+            .get('/api/users/admin-list/')
+            .then((res) => {
+                setUsers(res.data);
+            })
+            .catch((err) => {
+                console.error('Failed to fetch users:', err);
+            });
     }, []);
 
-    const handleAdminToggle = (userId, isAdmin) => {
+    const handleAdminToggle = useCallback((userId, isAdmin) => {
         axiosInstance
-            .patch(`api/users/${userId}/`, { is_admin: !isAdmin })
+            .patch(`/api/users/${userId}/`, { is_admin: !isAdmin })
             .then((res) => {
-                setUsers(users.map((user) => (user.id === userId ? res.data : user)));
+                setUsers((prevUsers) =>
+                    prevUsers.map((user) => (user.id === userId ? res.data : user))
+                );
+            })
+            .catch((err) => {
+                console.error('Failed to toggle admin status:', err);
             });
-    };
+    }, []);
 
     return (
         <div>
