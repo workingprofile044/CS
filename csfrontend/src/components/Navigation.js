@@ -5,12 +5,12 @@ function Navigation({ isAuthenticated }) {
     console.log('isAuthenticated:', isAuthenticated);
     return (
         <nav>
-            <a href="/">Home</a>
-            {!isAuthenticated && <a href="/register">Register</a>}
-            {!isAuthenticated && <a href="/login">Login</a>}
-            {isAuthenticated && <a href="/upload">Upload</a>}
-            {isAuthenticated && <a href="/files">Files</a>}
-            {isAuthenticated ? <a href="/logout">Logout</a> : <a href="/login">Login</a>}
+            <Link to="/">Home</Link>
+            {!isAuthenticated && <Link to="/register">Register</Link>}
+            {!isAuthenticated && <Link to="/login">Login</Link>}
+            {isAuthenticated && <Link to="/upload">Upload</Link>}
+            {isAuthenticated && <Link to="/files">Files</Link>}
+            {isAuthenticated ? <Link to="/logout">Logout</Link> : <Link to="/login">Login</Link>}
         </nav>
     );
 }

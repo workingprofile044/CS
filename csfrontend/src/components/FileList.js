@@ -9,6 +9,7 @@ function FileList() {
         axiosInstance.get('api/storage/files/')
             .then((res) => {
                 setFiles(res.data);
+                setErrorMessage(''); // Clear any previous errors
             })
             .catch((err) => {
                 console.error('Error fetching files:', err);
@@ -21,6 +22,7 @@ function FileList() {
             axiosInstance.delete(`api/storage/delete/${fileId}/`)
                 .then(() => {
                     setFiles(files.filter((file) => file.id !== fileId));
+                    setErrorMessage(''); // Clear error if any from previous operations
                 })
                 .catch((err) => {
                     console.error('Error deleting file:', err);
@@ -35,6 +37,7 @@ function FileList() {
             axiosInstance.patch(`api/storage/rename/${fileId}/`, { new_name: newName })
                 .then((res) => {
                     setFiles(files.map((file) => (file.id === fileId ? res.data : file)));
+                    setErrorMessage(''); // Clear error if any from previous operations
                 })
                 .catch((err) => {
                     console.error('Error renaming file:', err);

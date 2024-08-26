@@ -18,6 +18,11 @@ function Register() {
             ...formData,
             [e.target.name]: e.target.value,
         });
+        // Clear errors for the field being updated
+        setErrors({
+            ...errors,
+            [e.target.name]: '',
+        });
     };
 
     const handleSubmit = (e) => {
@@ -46,6 +51,7 @@ function Register() {
                 name="username"
                 placeholder="Username"
                 onChange={handleChange}
+                value={formData.username}
                 required
             />
             {errors.username && <p className="error">{errors.username}</p>}
@@ -54,6 +60,7 @@ function Register() {
                 name="full_name"
                 placeholder="Full Name"
                 onChange={handleChange}
+                value={formData.full_name}
                 required
             />
             {errors.full_name && <p className="error">{errors.full_name}</p>}
@@ -62,6 +69,7 @@ function Register() {
                 name="email"
                 placeholder="Email"
                 onChange={handleChange}
+                value={formData.email}
                 required
             />
             {errors.email && <p className="error">{errors.email}</p>}
@@ -70,6 +78,7 @@ function Register() {
                 name="password"
                 placeholder="Password"
                 onChange={handleChange}
+                value={formData.password}
                 required
             />
             {errors.password && <p className="error">{errors.password}</p>}

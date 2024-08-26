@@ -27,6 +27,7 @@ function App() {
     };
 
     const handleLogout = () => {
+        localStorage.removeItem('access_token'); // Remove token
         setIsAuthenticated(false);
     };
 
@@ -41,6 +42,8 @@ function App() {
                     <Route path="/upload" element={isAuthenticated ? <FileUpload /> : <Navigate to="/login" />} />
                     <Route path="/files" element={isAuthenticated ? <FileList /> : <Navigate to="/login" />} />
                     <Route path="/logout" element={<Logout onLogout={handleLogout} />} />
+                    {isAuthenticated && <Route path="*" element={<Navigate to="/files" />} />} {/* Redirect if logged in */}
+                    {!isAuthenticated && <Route path="*" element={<Navigate to="/login" />} />} {/* Redirect if not logged in */}
                 </Routes>
             </div>
         </Router>

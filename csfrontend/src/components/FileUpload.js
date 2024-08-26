@@ -5,6 +5,7 @@ function FileUpload() {
     const [file, setFile] = useState(null);
     const [comment, setComment] = useState('');
     const [successMessage, setSuccessMessage] = useState('');
+    const [errorMessage, setErrorMessage] = useState('');
     const [isUploading, setIsUploading] = useState(false);
 
     const handleFileChange = (e) => {
@@ -18,6 +19,7 @@ function FileUpload() {
     const handleSubmit = (e) => {
         e.preventDefault();
         setSuccessMessage('');
+        setErrorMessage('');
         setIsUploading(true);
 
         const formData = new FormData();
@@ -27,21 +29,22 @@ function FileUpload() {
         axiosInstance
             .post('api/storage/upload/', formData, {
                 headers: {
-                    'Content-Type': 'multipart/form-data'
+                    'Content-Type': 'multipart/form-data',
                 }
             })
             .then((res) => {
                 setSuccessMessage('Your file has been uploaded successfully!');
+                setErrorMessage('');
                 console.log('File uploaded successfully:', res.data);
                 setFile(null);
                 setComment('');
             })
             .catch((err) => {
-                console.error('File upload error:', err);
+                setSuccessMessage('');
                 const errorMessage = err.response && err.response.data && err.response.data.detail
                     ? err.response.data.detail
                     : 'Failed to upload your file. Please try again.';
-                setSuccessMessage(errorMessage);
+                setErrorMessage(errorMessage);
             })
             .finally(() => {
                 setIsUploading(false);
@@ -72,10 +75,10 @@ function FileUpload() {
                     {isUploading ? 'Uploading...' : 'Upload'}
                 </button>
             </form>
-            {successMessage && <p className="mt-2">{successMessage}</p>}
+            {successMessage && <p className="mt-2 text-success">{successMessage}</p>}
+            {errorMessage && <p className="mt-2 text-danger">{errorMessage}</p>}
         </div>
     );
 }
 
 export default FileUpload;
-
