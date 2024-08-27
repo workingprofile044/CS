@@ -22,12 +22,29 @@ function FileUpload() {
         setErrorMessage('');
         setIsUploading(true);
 
+        if (!file) {
+            setErrorMessage('Please select a file to upload.');
+            setIsUploading(false);
+            return;
+        }
+
         const formData = new FormData();
         formData.append('file', file);
         formData.append('comment', comment);
 
+        console.log('Submitting form data:', {
+            file: file.name,
+            size: file.size,
+            type: file.type,
+            comment,
+        });
+
         axiosInstance
-            .post('api/storage/upload/', formData)
+            .post('api/storage/upload/', formData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data',
+                },
+            })
             .then((res) => {
                 setSuccessMessage('Your file has been uploaded successfully!');
                 setErrorMessage('');
@@ -37,11 +54,17 @@ function FileUpload() {
             })
             .catch((err) => {
                 setSuccessMessage('');
-                const errorMessage = err.response && err.response.data && err.response.data.detail
-                    ? err.response.data.detail
+                const errorResponse = err.response ? err.response.data : null;
+                const errorMessage = errorResponse && errorResponse.detail
+                    ? errorResponse.detail
                     : 'Failed to upload your file. Please try again.';
+
+                console.error('File upload error:', {
+                    message: err.message,
+                    response: errorResponse,
+                });
+
                 setErrorMessage(errorMessage);
-                console.error('File upload error:', err.response ? err.response : err);
             })
             .finally(() => {
                 setIsUploading(false);
