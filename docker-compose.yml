@@ -24,7 +24,7 @@ services:
       - db
     environment:
       - SECRET_KEY=ul6v3gtio3_&m&%oelcb6(+t=-fbj2ovv(9-8+8ekta(sjtxc&
-      - DATABASE_URL=postgres://csuser:cspass@db:5432/csdb
+      - DATABASE_URL=postgres://csadmin:cspass@db:5432/csdb1
       - DEBUG=1
 
   frontend:
