@@ -21,7 +21,7 @@ function Login({ onLogin }) {
         e.preventDefault();
         setIsLoading(true);
         axiosInstance
-            .post('/api/users/login/', formData)
+            .post('/users/login/', formData)
             .then((res) => {
                 localStorage.setItem('access_token', res.data.access);
                 localStorage.setItem('refresh_token', res.data.refresh);

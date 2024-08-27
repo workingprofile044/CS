@@ -8,7 +8,7 @@ function AdminDashboard() {
 
     useEffect(() => {
         axiosInstance
-            .get('/api/users/admin-list/')
+            .get('/users/admin-list/')
             .then((res) => {
                 setUsers(res.data);
                 setIsLoading(false);
