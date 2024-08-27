@@ -1,4 +1,6 @@
 import os
+import logging
+from django.utils.text import slugify
 from rest_framework import generics, permissions, status
 from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework.views import APIView
@@ -10,6 +12,8 @@ from django.core.exceptions import ValidationError
 from django.http import FileResponse, Http404
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
+
+logger = logging.getLogger(__name__)
 
 class FileListView(generics.ListAPIView):
     serializer_class = FileSerializer
@@ -24,23 +28,40 @@ class FileUploadView(generics.CreateAPIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def perform_create(self, serializer):
-        file_obj = self.request.data['file']
+        logger.debug(f"Request data: {self.request.data}")
+        logger.debug(f"Request files: {self.request.FILES}")
+
+        file_obj = self.request.data.get('file')
+        if not file_obj:
+            logger.error("No file found in request data.")
+            raise ValidationError("No file found in the request data.")
+
         user = self.request.user
-        file_path = os.path.join(settings.MEDIA_ROOT, user.username, file_obj.name)
+
+        # Sanitize file name to avoid issues with special characters
+        sanitized_file_name = slugify(file_obj.name)
+        file_path = os.path.join(settings.MEDIA_ROOT, user.username, sanitized_file_name)
 
         os.makedirs(os.path.dirname(file_path), exist_ok=True)
 
-        with open(file_path, 'wb+') as destination:
-            for chunk in file_obj.chunks():
-                destination.write(chunk)
+        try:
+            # Save file to disk
+            with open(file_path, 'wb+') as destination:
+                for chunk in file_obj.chunks():
+                    destination.write(chunk)
+            logger.debug(f"File saved to: {file_path}")
 
-        serializer.save(
-            user=user,
-            original_name=file_obj.name,
-            file_path=file_path,
-            size=file_obj.size,
-            comment=self.request.data.get('comment', ''),
-        )
+            # Save file details in the database
+            serializer.save(
+                user=user,
+                original_name=file_obj.name,
+                file_path=file_path,
+                size=file_obj.size,
+                comment=self.request.data.get('comment', ''),
+            )
+        except Exception as e:
+            logger.error(f"Error while saving file: {str(e)}")
+            raise ValidationError("An error occurred while saving the file.")
 
 class FileDeleteView(APIView):
     permission_classes = [permissions.IsAuthenticated]
@@ -63,10 +84,11 @@ class FileRenameView(APIView):
             file = File.objects.get(pk=pk, user=request.user)
             new_name = request.data.get('new_name', None)
             if new_name:
-                new_path = os.path.join(os.path.dirname(file.file_path), new_name)
+                sanitized_new_name = slugify(new_name)
+                new_path = os.path.join(os.path.dirname(file.file_path), sanitized_new_name)
                 if os.path.exists(file.file_path):
                     os.rename(file.file_path, new_path)
-                    file.original_name = new_name
+                    file.original_name = sanitized_new_name
                     file.file_path = new_path
                     file.save()
                     return Response(FileSerializer(file, context={'request': request}).data)

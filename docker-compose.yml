@@ -18,6 +18,7 @@ services:
     volumes:
       - ./CSbackend:/app
       - static_volume:/app/staticfiles
+      - media_volume:/app/media
     ports:
       - "8000:8000"
     depends_on:
@@ -41,3 +42,4 @@ services:
 volumes:
   postgres_data:
   static_volume:
+  media_volume:
