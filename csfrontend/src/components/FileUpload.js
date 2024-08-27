@@ -40,11 +40,7 @@ function FileUpload() {
         });
 
         axiosInstance
-            .post('api/storage/upload/', formData, {
-                headers: {
-                    'Content-Type': 'multipart/form-data',
-                },
-            })
+            .post('api/storage/upload/', formData)
             .then((res) => {
                 setSuccessMessage('Your file has been uploaded successfully!');
                 setErrorMessage('');
@@ -102,3 +98,4 @@ function FileUpload() {
 }
 
 export default FileUpload;
+
