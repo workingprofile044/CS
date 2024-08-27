@@ -32,21 +32,14 @@ function FileUpload() {
         formData.append('file', file);
         formData.append('comment', comment);
 
-        console.log('Submitting form data:', {
-            file: file.name,
-            size: file.size,
-            type: file.type,
-            comment,
-        });
-
         axiosInstance
             .post('api/storage/upload/', formData)
             .then((res) => {
                 setSuccessMessage('Your file has been uploaded successfully!');
                 setErrorMessage('');
                 console.log('File uploaded successfully:', res.data);
-                setFile(null);  // Reset file input
-                setComment('');  // Reset comment input
+                setFile(null);
+                setComment('');
             })
             .catch((err) => {
                 setSuccessMessage('');
