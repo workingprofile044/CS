@@ -6,7 +6,7 @@ function FileList() {
     const [errorMessage, setErrorMessage] = useState('');
 
     useEffect(() => {
-        axiosInstance.get('/storage/files/')
+        axiosInstance.get('storage/files/')
             .then((res) => {
                 setFiles(res.data);
                 setErrorMessage(''); // Clear any previous errors
@@ -19,7 +19,7 @@ function FileList() {
 
     const handleDelete = (fileId) => {
         if (window.confirm('Are you sure you want to delete this file?')) {
-            axiosInstance.delete(`/storage/delete/${fileId}/`)
+            axiosInstance.delete(`storage/delete/${fileId}/`)
                 .then(() => {
                     setFiles(files.filter((file) => file.id !== fileId));
                     setErrorMessage(''); // Clear error if any from previous operations
@@ -34,7 +34,7 @@ function FileList() {
     const handleRename = (fileId) => {
         const newName = prompt('New name:');
         if (newName) {
-            axiosInstance.patch(`/storage/rename/${fileId}/`, { new_name: newName })
+            axiosInstance.patch(`storage/rename/${fileId}/`, { new_name: newName })
                 .then((res) => {
                     setFiles(files.map((file) => (file.id === fileId ? res.data : file)));
                     setErrorMessage(''); // Clear error if any from previous operations

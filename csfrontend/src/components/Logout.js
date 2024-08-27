@@ -12,7 +12,7 @@ function Logout({ onLogout }) {
             navigate('/login');
         } else {
             axiosInstance
-                .post('/users/logout/', { refresh_token: refreshToken })
+                .post('users/logout/', { refresh_token: refreshToken })
                 .then(() => {
                     localStorage.removeItem('access_token');
                     localStorage.removeItem('refresh_token');

@@ -8,7 +8,7 @@ function AdminDashboard() {
 
     useEffect(() => {
         axiosInstance
-            .get('/users/admin-list/')
+            .get('users/admin-list/')
             .then((res) => {
                 setUsers(res.data);
                 setIsLoading(false);
@@ -22,7 +22,7 @@ function AdminDashboard() {
 
     const handleAdminToggle = useCallback((userId, isAdmin) => {
         axiosInstance
-            .patch(`/api/users/${userId}/`, { is_admin: !isAdmin })
+            .patch(`api/users/${userId}/`, { is_admin: !isAdmin })
             .then((res) => {
                 setUsers((prevUsers) =>
                     prevUsers.map((user) => (user.id === userId ? res.data : user))

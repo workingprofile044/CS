@@ -29,7 +29,7 @@ function Register() {
         e.preventDefault();
         setErrors({});
         axiosInstance
-            .post('/users/register/', formData)
+            .post('users/register/', formData)
             .then((res) => {
                 console.log(res.data);
                 navigate('/login');
