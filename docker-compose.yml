@@ -6,8 +6,8 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data/
     environment:
-      POSTGRES_DB: csdb
-      POSTGRES_USER: csuser
+      POSTGRES_DB: csdb1
+      POSTGRES_USER: csadmin
       POSTGRES_PASSWORD: cspass
 
   web:
