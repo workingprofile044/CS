@@ -28,7 +28,7 @@ MIDDLEWARE = [
     'django.contrib.sessions.middleware.SessionMiddleware',
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
+    'django.middleware.csrf.CsrfViewMiddleware',  # Enable CSRF middleware
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
@@ -123,13 +123,11 @@ SIMPLE_JWT = {
     'USER_ID_CLAIM': 'user_id',
 }
 
-
+SECURE_BROWSER_XSS_FILTER = False
+SECURE_CONTENT_TYPE_NOSNIFF = False
 CSRF_COOKIE_SECURE = False
 SESSION_COOKIE_SECURE = False
-CSRF_COOKIE_HTTPONLY = False
-CSRF_USE_SESSIONS = True
-CSRF_TRUSTED_ORIGINS = ['*']
-CSRF_HEADER_NAME = 'HTTP_X_CSRFTOKEN'
+X_FRAME_OPTIONS = 'SAMEORIGIN'
 
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
@@ -144,7 +142,6 @@ CORS_ALLOW_HEADERS = [
     'origin',
     'Referer',
     'User-Agent',
-    'Bearer',
 ]
 
 AUTH_USER_MODEL = 'users.CustomUser'

@@ -1,5 +1,6 @@
 import axios from 'axios';
 
+// Function to get the CSRF token from the cookie
 function getCookie(name) {
     let cookieValue = null;
     if (document.cookie && document.cookie !== '') {
