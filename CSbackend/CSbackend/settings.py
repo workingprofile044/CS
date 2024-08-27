@@ -2,24 +2,12 @@ import os
 from pathlib import Path
 from datetime import timedelta
 import dj_database_url
-# Build paths inside the project like this: BASE_DIR / 'subdir'.
+
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
-
-# SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = os.getenv('SECRET_KEY', 'your-default-secret-key')
-
-# SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = bool(int(os.getenv('DEBUG', '1')))
-
 ALLOWED_HOSTS = ['*']
-
-ROOT_URLCONF = 'CSbackend.urls'
-
-# Application definition
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -66,17 +54,9 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'CSbackend.wsgi.application'
 
-
-# Database
-# https://docs.djangoproject.com/en/5.1/ref/settings/#databases
-
 DATABASES = {
     'default': dj_database_url.config(default=os.getenv('DATABASE_URL'))
 }
-
-
-# Password validation
-# https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
 
 AUTH_PASSWORD_VALIDATORS = [
     {
@@ -105,30 +85,16 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
-# Internationalization
-# https://docs.djangoproject.com/en/5.1/topics/i18n/
-
 LANGUAGE_CODE = 'en-us'
-
 TIME_ZONE = 'UTC'
-
 USE_I18N = True
-
 USE_TZ = True
-
-
-# Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/5.1/howto/static-files/
 
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
-
-# Default primary key field type
-# https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
@@ -157,18 +123,18 @@ SIMPLE_JWT = {
     'USER_ID_CLAIM': 'user_id',
 }
 
-SECURE_BROWSER_XSS_FILTER = False
-SECURE_CONTENT_TYPE_NOSNIFF = False
+
 CSRF_COOKIE_SECURE = False
 SESSION_COOKIE_SECURE = False
-X_FRAME_OPTIONS = 'SAMEORIGIN'
+CSRF_COOKIE_HTTPONLY = False
+CSRF_USE_SESSIONS = True
+CSRF_TRUSTED_ORIGINS = ['*']
+CSRF_HEADER_NAME = 'HTTP_X_CSRFTOKEN'
 
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 CORS_ALLOW_ALL_ORIGINS = True
-
 CORS_ALLOW_CREDENTIALS = True
-
 CORS_ALLOW_HEADERS = [
     'content-type',
     'Authorization',
@@ -178,7 +144,7 @@ CORS_ALLOW_HEADERS = [
     'origin',
     'Referer',
     'User-Agent',
+    'Bearer',
 ]
 
 AUTH_USER_MODEL = 'users.CustomUser'
-
