@@ -2,7 +2,6 @@ import os
 import logging
 from rest_framework import generics, permissions, status
 from rest_framework.views import APIView
-from django.core.exceptions import ValidationError
 from django.http import FileResponse, Http404
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
@@ -12,6 +11,7 @@ from rest_framework.response import Response
 from rest_framework.parsers import MultiPartParser, FormParser
 from .models import File
 from .serializers import FileSerializer
+from rest_framework.exceptions import ValidationError  # This is the correct import for DRF's ValidationError
 
 logger = logging.getLogger(__name__)
 
@@ -23,31 +23,35 @@ class FileListView(generics.ListAPIView):
         logger.info(f"Fetching file list for user: {self.request.user}")
         return File.objects.filter(user=self.request.user)
 
-# Simplified File Upload View
-class SimpleFileUploadView(APIView):
+class FileUploadView(generics.CreateAPIView):
+    serializer_class = FileSerializer
     parser_classes = (MultiPartParser, FormParser)
     permission_classes = [permissions.IsAuthenticated]
 
     def post(self, request, *args, **kwargs):
-        file_obj = request.data.get('file')
+        file_obj = request.FILES.get('file')
 
         if not file_obj:
-            return Response({"error": "No file provided."}, status=status.HTTP_400_BAD_REQUEST)
+            raise ValidationError("No file provided.")  # Using DRF's ValidationError
 
-        # Log the file details
-        logger.info(f"Uploading file: {file_obj.name} for user: {request.user.username}")
-
-        # Save the file to the filesystem
-        file_path = os.path.join(settings.MEDIA_ROOT, request.user.username, file_obj.name)
+        user = request.user
+        file_path = os.path.join(settings.MEDIA_ROOT, user.username, file_obj.name)
         os.makedirs(os.path.dirname(file_path), exist_ok=True)
 
         with default_storage.open(file_path, 'wb+') as destination:
             for chunk in file_obj.chunks():
                 destination.write(chunk)
 
-        # You can add more logic here to save file details to the database if needed
+        file_record = File.objects.create(
+            user=user,
+            original_name=file_obj.name,
+            size=file_obj.size,
+            file_path=file_path,
+            comment=request.data.get('comment', '')
+        )
 
-        return Response({"detail": "File uploaded successfully."}, status=status.HTTP_201_CREATED)
+        serializer = self.get_serializer(file_record)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 class FileDeleteView(APIView):
     permission_classes = [permissions.IsAuthenticated]
@@ -81,7 +85,7 @@ class FileRenameView(APIView):
                     logger.info(f"Renamed file '{file.file_path}' to '{new_name}' for user '{request.user.username}'.")
                     return Response(FileSerializer(file, context={'request': request}).data)
                 else:
-                    raise ValidationError("File does not exist on the server.")
+                    raise ValidationError("File does not exist on the server.")  # Using DRF's ValidationError
             return Response(status=status.HTTP_400_BAD_REQUEST)
         except File.DoesNotExist:
             logger.warning(f"File with id '{pk}' not found for user '{request.user.username}'.")
