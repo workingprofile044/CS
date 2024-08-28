@@ -23,13 +23,19 @@ class FileListView(generics.ListAPIView):
         logger.info(f"Fetching file list for user: {self.request.user}")
         return File.objects.filter(user=self.request.user)
 
+
 class FileUploadView(generics.CreateAPIView):
     serializer_class = FileSerializer
     parser_classes = (MultiPartParser, FormParser)
     permission_classes = [permissions.IsAuthenticated]
 
     def perform_create(self, serializer):
-        file_obj = self.request.data['file']
+        # Extract the file object from the request
+        file_obj = self.request.data.get('file')
+
+        if not file_obj:
+            raise ValidationError("No file provided.")
+
         user = self.request.user
         file_path = os.path.join(settings.MEDIA_ROOT, user.username, file_obj.name)
 
