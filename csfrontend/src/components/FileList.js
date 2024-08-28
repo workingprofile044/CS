@@ -6,7 +6,7 @@ function FileList() {
     const [errorMessage, setErrorMessage] = useState('');
 
     useEffect(() => {
-        axiosInstance.get('/api/storage/files/')
+        axiosInstance.get('api/storage/files/')
             .then((res) => {
                 setFiles(res.data);
                 setErrorMessage(''); // Clear any previous errors
@@ -19,7 +19,7 @@ function FileList() {
 
     const handleDelete = (fileId) => {
         if (window.confirm('Вы уверены, что хотите удалить этот файл?')) {
-            axiosInstance.delete(`/api/storage/delete/${fileId}/`)
+            axiosInstance.delete(`api/storage/delete/${fileId}/`)
                 .then(() => {
                     setFiles(files.filter((file) => file.id !== fileId));
                     setErrorMessage(''); // Clear error if any from previous operations
@@ -34,7 +34,7 @@ function FileList() {
     const handleRename = (fileId) => {
         const newName = prompt('Новое имя:');
         if (newName) {
-            axiosInstance.patch(`/api/storage/rename/${fileId}/`, { new_name: newName })
+            axiosInstance.patch(`api/storage/rename/${fileId}/`, { new_name: newName })
                 .then((res) => {
                     setFiles(files.map((file) => (file.id === fileId ? res.data : file)));
                     setErrorMessage(''); // Clear error if any from previous operations
@@ -95,6 +95,9 @@ function FileList() {
                         >
                             Удалить
                         </button>
+                        <div>
+                            <p>Link: <a href={file.download_url} target="_blank" rel="noopener noreferrer">{file.download_url}</a></p>
+                        </div>
                     </li>
                 ))}
             </ul>
@@ -103,4 +106,3 @@ function FileList() {
 }
 
 export default FileList;
-
