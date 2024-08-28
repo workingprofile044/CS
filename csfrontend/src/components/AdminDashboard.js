@@ -1,6 +1,3 @@
-import React, { useState, useEffect, useCallback } from 'react';
-import axiosInstance from '../axiosConfig';
-
 function AdminDashboard() {
     const [users, setUsers] = useState([]);
     const [errorMessage, setErrorMessage] = useState('');
@@ -15,7 +12,7 @@ function AdminDashboard() {
             })
             .catch((err) => {
                 console.error('Failed to fetch users:', err);
-                setErrorMessage('Failed to fetch users. Please try again later.');
+                setErrorMessage('Не удалось загрузить список пользователей. Попробуйте позже.');
                 setIsLoading(false);
             });
     }, []);
@@ -31,28 +28,28 @@ function AdminDashboard() {
             })
             .catch((err) => {
                 console.error('Failed to toggle admin status:', err);
-                setErrorMessage('Failed to toggle admin status. Please try again.');
+                setErrorMessage('Не удалось изменить статус администратора. Попробуйте еще раз.');
             });
     }, []);
 
     return (
         <div>
-            <h2>Admin Dashboard</h2>
+            <h2>Панель администратора</h2>
             {errorMessage && <p style={{ color: 'red' }}>{errorMessage}</p>}
             {isLoading ? (
-                <p>Loading users...</p>
+                <p>Загрузка пользователей...</p>
             ) : (
                 <ul>
                     {users.map((user) => (
                         <li key={user.id}>
-                            {user.username} - {user.full_name} - {user.is_admin ? 'Admin' : 'User'}
+                            {user.username} - {user.full_name} - {user.is_admin ? 'Администратор' : 'Пользователь'}
                             <button onClick={() => handleAdminToggle(user.id, user.is_admin)}>
-                                {user.is_admin ? 'Revoke Admin' : 'Make Admin'}
+                                {user.is_admin ? 'Лишить прав администратора' : 'Назначить администратором'}
                             </button>
                             <ul>
-                                <li>Number of Files: {user.file_count}</li>
-                                <li>Total Storage Used: {user.storage_used} MB</li>
-                                <li><a href={`/admin/manage-files/${user.id}`}>Manage Files</a></li>
+                                <li>Количество файлов: {user.file_count}</li>
+                                <li>Используемое место: {user.storage_used} МБ</li>
+                                <li><a href={`/admin/manage-files/${user.id}`}>Управление файлами</a></li>
                             </ul>
                         </li>
                     ))}

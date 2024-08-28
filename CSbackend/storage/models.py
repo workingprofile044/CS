@@ -17,7 +17,6 @@ class File(models.Model):
         if not self.special_link:
             self.special_link = uuid.uuid4().hex
 
-        # Ensure the special_link is unique
         while File.objects.filter(special_link=self.special_link).exists():
             self.special_link = uuid.uuid4().hex
 

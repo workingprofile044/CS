@@ -1,18 +1,17 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
-
-function Navigation({ isAuthenticated }) {
+function Navigation({ isAuthenticated, isAdmin }) {
     console.log('isAuthenticated:', isAuthenticated);
     return (
         <nav>
-            <Link to="/">Home</Link>
-            {!isAuthenticated && <Link to="/register">Register</Link>}
-            {!isAuthenticated && <Link to="/login">Login</Link>}
-            {isAuthenticated && <Link to="/upload">Upload</Link>}
-            {isAuthenticated && <Link to="/files">Files</Link>}
-            {isAuthenticated ? <Link to="/logout">Logout</Link> : <Link to="/login">Login</Link>}
+            <Link to="/">Главная</Link>
+            {!isAuthenticated && <Link to="/register">Регистрация</Link>}
+            {!isAuthenticated && <Link to="/login">Вход</Link>}
+            {isAuthenticated && <Link to="/upload">Загрузить файл</Link>}
+            {isAuthenticated && <Link to="/files">Мои файлы</Link>}
+            {isAdmin && <Link to="/admin">Панель администратора</Link>}
+            {isAuthenticated ? <Link to="/logout">Выход</Link> : <Link to="/login">Вход</Link>}
         </nav>
     );
 }
 
 export default Navigation;
+

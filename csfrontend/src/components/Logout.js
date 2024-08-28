@@ -1,7 +1,3 @@
-import React, { useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import axiosInstance from '../axiosConfig';
-
 function Logout({ onLogout }) {
     const navigate = useNavigate();
 
@@ -21,14 +17,14 @@ function Logout({ onLogout }) {
                     navigate('/login');
                 })
                 .catch((err) => {
-                    console.error('Logout failed:', err);
+                    console.error('Не удалось выйти:', err);
                     onLogout();
                     navigate('/login');
                 });
         }
     }, [navigate, onLogout]);
 
-    return <p>Logging out...</p>;
+    return <p>Выход...</p>;
 }
 
 export default Logout;

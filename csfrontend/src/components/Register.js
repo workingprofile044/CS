@@ -1,7 +1,3 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import axiosInstance from '../axiosConfig';
-
 function Register() {
     const [formData, setFormData] = useState({
         username: '',
@@ -39,7 +35,7 @@ function Register() {
                     setErrors(err.response.data);
                 } else {
                     console.error(err);
-                    alert("Registration failed. Please try again.");
+                    alert("Не удалось зарегистрироваться. Попробуйте еще раз.");
                 }
             });
     };
@@ -49,7 +45,7 @@ function Register() {
             <input
                 type="text"
                 name="username"
-                placeholder="Username"
+                placeholder="Имя пользователя"
                 onChange={handleChange}
                 value={formData.username}
                 required
@@ -58,7 +54,7 @@ function Register() {
             <input
                 type="text"
                 name="full_name"
-                placeholder="Full Name"
+                placeholder="Полное имя"
                 onChange={handleChange}
                 value={formData.full_name}
                 required
@@ -67,7 +63,7 @@ function Register() {
             <input
                 type="email"
                 name="email"
-                placeholder="Email"
+                placeholder="Электронная почта"
                 onChange={handleChange}
                 value={formData.email}
                 required
@@ -76,13 +72,13 @@ function Register() {
             <input
                 type="password"
                 name="password"
-                placeholder="Password"
+                placeholder="Пароль"
                 onChange={handleChange}
                 value={formData.password}
                 required
             />
             {errors.password && <p className="error">{errors.password}</p>}
-            <button type="submit">Register</button>
+            <button type="submit">Зарегистрироваться</button>
         </form>
     );
 }

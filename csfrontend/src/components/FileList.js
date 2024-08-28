@@ -1,6 +1,3 @@
-import React, { useState, useEffect } from 'react';
-import axiosInstance from '../axiosConfig';
-
 function FileList() {
     const [files, setFiles] = useState([]);
     const [errorMessage, setErrorMessage] = useState('');
@@ -13,12 +10,12 @@ function FileList() {
             })
             .catch((err) => {
                 console.error('Error fetching files:', err);
-                setErrorMessage('Failed to fetch files. Please try again later.');
+                setErrorMessage('Не удалось загрузить файлы. Попробуйте позже.');
             });
     }, []);
 
     const handleDelete = (fileId) => {
-        if (window.confirm('Are you sure you want to delete this file?')) {
+        if (window.confirm('Вы уверены, что хотите удалить этот файл?')) {
             axiosInstance.delete(`api/storage/delete/${fileId}/`)
                 .then(() => {
                     setFiles(files.filter((file) => file.id !== fileId));
@@ -26,13 +23,13 @@ function FileList() {
                 })
                 .catch((err) => {
                     console.error('Error deleting file:', err);
-                    setErrorMessage('Failed to delete the file. Please try again.');
+                    setErrorMessage('Не удалось удалить файл. Попробуйте еще раз.');
                 });
         }
     };
 
     const handleRename = (fileId) => {
-        const newName = prompt('New name:');
+        const newName = prompt('Новое имя:');
         if (newName) {
             axiosInstance.patch(`api/storage/rename/${fileId}/`, { new_name: newName })
                 .then((res) => {
@@ -41,7 +38,7 @@ function FileList() {
                 })
                 .catch((err) => {
                     console.error('Error renaming file:', err);
-                    setErrorMessage('Failed to rename the file. Please try again.');
+                    setErrorMessage('Не удалось переименовать файл. Попробуйте еще раз.');
                 });
         }
     };
@@ -66,7 +63,7 @@ function FileList() {
                                 marginRight: '10px',
                             }}
                         >
-                            Download
+                            Скачать
                         </a>
                         <button
                             onClick={() => handleRename(file.id)}
@@ -80,7 +77,7 @@ function FileList() {
                                 cursor: 'pointer',
                             }}
                         >
-                            Rename
+                            Переименовать
                         </button>
                         <button
                             onClick={() => handleDelete(file.id)}
@@ -93,7 +90,7 @@ function FileList() {
                                 cursor: 'pointer',
                             }}
                         >
-                            Delete
+                            Удалить
                         </button>
                     </li>
                 ))}

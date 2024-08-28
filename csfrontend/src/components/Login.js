@@ -1,7 +1,3 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import axiosInstance from '../axiosConfig';
-
 function Login({ onLogin }) {
     const navigate = useNavigate();
     const [formData, setFormData] = useState({
@@ -31,7 +27,7 @@ function Login({ onLogin }) {
             })
             .catch((err) => {
                 console.error(err);
-                alert("Login failed. Please check your credentials and try again.");
+                alert("Не удалось войти. Проверьте свои данные и попробуйте еще раз.");
             })
             .finally(() => {
                 setIsLoading(false);
@@ -43,7 +39,7 @@ function Login({ onLogin }) {
             <input
                 type="text"
                 name="username"
-                placeholder="Username"
+                placeholder="Имя пользователя"
                 onChange={handleChange}
                 value={formData.username}
                 required
@@ -51,13 +47,13 @@ function Login({ onLogin }) {
             <input
                 type="password"
                 name="password"
-                placeholder="Password"
+                placeholder="Пароль"
                 onChange={handleChange}
                 value={formData.password}
                 required
             />
             <button type="submit" disabled={isLoading}>
-                {isLoading ? 'Logging in...' : 'Login'}
+                {isLoading ? 'Вход...' : 'Войти'}
             </button>
         </form>
     );

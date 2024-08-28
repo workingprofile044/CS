@@ -72,7 +72,7 @@ function CustomFileViewer({ fileUrl, fileType }) {
 
     const handleOnError = (e) => {
         console.error('Error in FileViewer:', e);
-        setError('Failed to load the file. Please try again later.');
+        setError('Не удалось загрузить файл. Попробуйте позже.');
         setLoading(false);
     };
 
@@ -89,7 +89,7 @@ function CustomFileViewer({ fileUrl, fileType }) {
     if (!supportedFileTypes.includes(fileType.toLowerCase())) {
         return (
             <Alert severity="warning">
-                Unsupported file type: {fileType}. Please select a supported file.
+                Неподдерживаемый тип файла: {fileType}. Пожалуйста, выберите поддерживаемый файл.
             </Alert>
         );
     }
@@ -111,7 +111,7 @@ function CustomFileViewer({ fileUrl, fileType }) {
                         onClick={handleRetry}
                         className={classes.retryButton}
                     >
-                        Retry
+                        Повторить попытку
                     </Button>
                 </Box>
             )}

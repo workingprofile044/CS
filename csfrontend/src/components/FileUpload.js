@@ -1,6 +1,3 @@
-import React, { useState } from 'react';
-import axiosInstance from '../axiosConfig';
-
 function FileUpload() {
     const [file, setFile] = useState(null);
     const [comment, setComment] = useState('');
@@ -28,14 +25,14 @@ function FileUpload() {
 
         try {
             const res = await axiosInstance.post('/api/storage/upload/', formData);
-            setSuccessMessage('Your file has been uploaded successfully!');
+            setSuccessMessage('Файл успешно загружен!');
             setFile(null);  // Reset file input
             setComment('');  // Reset comment input
             console.log('File uploaded successfully:', res.data);
         } catch (err) {
             const errorMessage = err.response && err.response.data && err.response.data.detail
                 ? err.response.data.detail
-                : 'Failed to upload your file. Please try again.';
+                : 'Не удалось загрузить файл. Попробуйте еще раз.';
             setErrorMessage(errorMessage);
             console.error('File upload error:', err.response ? err.response : err);
         } finally {
@@ -56,7 +53,7 @@ function FileUpload() {
                     type="text"
                     value={comment}
                     onChange={handleCommentChange}
-                    placeholder="Comment"
+                    placeholder="Комментарий"
                     className="form-control mb-2"
                 />
                 <button
@@ -64,7 +61,7 @@ function FileUpload() {
                     disabled={isUploading}
                     className="btn btn-primary"
                 >
-                    {isUploading ? 'Uploading...' : 'Upload'}
+                    {isUploading ? 'Загрузка...' : 'Загрузить'}
                 </button>
             </form>
             {successMessage && <p className="mt-2 text-success">{successMessage}</p>}
