@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import axiosInstance from '../axiosConfig';
 
 function FileUpload() {
     const [file, setFile] = useState(null);
@@ -16,40 +15,49 @@ function FileUpload() {
         setComment(e.target.value);
     };
 
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        setSuccessMessage('');
-        setErrorMessage('');
-        setIsUploading(true);
+const handleSubmit = async (e) => {
+    e.preventDefault();
+    setSuccessMessage('');
+    setErrorMessage('');
+    setIsUploading(true);
 
-        if (!file) {
-            setErrorMessage('Выберите файл для загрузки.');
-            setIsUploading(false);
-            return;
+    if (!file) {
+        setErrorMessage('Выберите файл для загрузки.');
+        setIsUploading(false);
+        return;
+    }
+
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('original_name', file.name);  // Explicitly set original_name
+    formData.append('size', file.size);  // Explicitly set size
+    formData.append('comment', comment);
+
+    try {
+        const response = await fetch('http://89.111.175.161:8000/api/storage/upload/', {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'Authorization': `Bearer ${localStorage.getItem('access_token')}`,
+            },
+        });
+
+        if (!response.ok) {
+            throw new Error('Upload failed');
         }
 
-        const formData = new FormData();
-        formData.append('file', file);
-        formData.append('original_name', file.name);  // Explicitly set original_name
-        formData.append('size', file.size);  // Explicitly set size
-        formData.append('comment', comment);
-
-        try {
-            const res = await axiosInstance.post('/api/storage/upload/', formData);
-            setSuccessMessage('Файл успешно загружен!');
-            setFile(null);  // Reset file input
-            setComment('');  // Reset comment input
-            console.log('File uploaded successfully:', res.data);
-        } catch (err) {
-            const errorMessage = err.response && err.response.data && err.response.data.detail
-                ? err.response.data.detail
-                : 'Не удалось загрузить файл. Попробуйте еще раз.';
-            setErrorMessage(errorMessage);
-            console.error('File upload error:', err.response ? err.response : err);
-        } finally {
-            setIsUploading(false);
-        }
-    };
+        const resData = await response.json();
+        setSuccessMessage('Файл успешно загружен!');
+        setFile(null);  // Reset file input
+        setComment('');  // Reset comment input
+        console.log('File uploaded successfully:', resData);
+    } catch (err) {
+        setErrorMessage('Не удалось загрузить файл. Попробуйте еще раз.');
+        console.error('File upload error:', err);
+    } finally {
+        setIsUploading(false);
+    }
+};
 
     return (
         <div>
