@@ -1,7 +1,6 @@
 import os
 import logging
 from rest_framework import generics, permissions, status
-from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from .models import File
@@ -11,6 +10,7 @@ from django.core.exceptions import ValidationError
 from django.http import FileResponse, Http404
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.parsers import MultiPartParser, FormParser
 
 logger = logging.getLogger(__name__)
 
@@ -22,6 +22,8 @@ class FileListView(generics.ListAPIView):
         logger.info(f"Fetching file list for user: {self.request.user}")
         return File.objects.filter(user=self.request.user)
 
+
+from rest_framework.parsers import MultiPartParser, FormParser
 
 class FileUploadView(generics.CreateAPIView):
     serializer_class = FileSerializer

@@ -2,7 +2,6 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 
 function Navigation({ isAuthenticated, isAdmin }) {
-    console.log('isAuthenticated:', isAuthenticated);
     return (
         <nav>
             <Link to="/">Главная</Link>

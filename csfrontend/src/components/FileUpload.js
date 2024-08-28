@@ -18,31 +18,41 @@ function FileUpload() {
     };
 
     const handleSubmit = async (e) => {
-        e.preventDefault();
-        setSuccessMessage('');
-        setErrorMessage('');
-        setIsUploading(true);
+    e.preventDefault();
+    setSuccessMessage('');
+    setErrorMessage('');
+    setIsUploading(true);
 
-        const formData = new FormData();
-        formData.append('file', file);
-        formData.append('comment', comment);
+    if (!file) {
+        setErrorMessage('Выберите файл для загрузки.');
+        setIsUploading(false);
+        return;
+    }
 
-        try {
-            const res = await axiosInstance.post('/api/storage/upload/', formData);
-            setSuccessMessage('Файл успешно загружен!');
-            setFile(null);  // Reset file input
-            setComment('');  // Reset comment input
-            console.log('File uploaded successfully:', res.data);
-        } catch (err) {
-            const errorMessage = err.response && err.response.data && err.response.data.detail
-                ? err.response.data.detail
-                : 'Не удалось загрузить файл. Попробуйте еще раз.';
-            setErrorMessage(errorMessage);
-            console.error('File upload error:', err.response ? err.response : err);
-        } finally {
-            setIsUploading(false);
-        }
-    };
+    const formData = new FormData();
+    formData.append('file', file);  // Make sure the file is correctly appended
+    formData.append('comment', comment);
+
+    try {
+        const res = await axiosInstance.post('/api/storage/upload/', formData, {
+            headers: {
+                'Content-Type': 'multipart/form-data',  // Ensure multipart/form-data is used for file uploads
+            },
+        });
+        setSuccessMessage('Файл успешно загружен!');
+        setFile(null);  // Reset file input
+        setComment('');  // Reset comment input
+        console.log('File uploaded successfully:', res.data);
+    } catch (err) {
+        const errorMessage = err.response && err.response.data && err.response.data.detail
+            ? err.response.data.detail
+            : 'Не удалось загрузить файл. Попробуйте еще раз.';
+        setErrorMessage(errorMessage);
+        console.error('File upload error:', err.response ? err.response : err);
+    } finally {
+        setIsUploading(false);
+    }
+};
 
     return (
         <div>
