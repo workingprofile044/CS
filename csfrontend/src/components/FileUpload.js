@@ -35,11 +35,8 @@ const handleSubmit = async (e) => {
     formData.append('comment', comment);
 
     try {
-        const res = await axiosInstance.post('/api/storage/upload/', formData, {
-            headers: {
-                'Content-Type': 'multipart/form-data',
-            },
-        });
+        // Do NOT manually set the Content-Type header here; let the browser handle it
+        const res = await axiosInstance.post('/api/storage/upload/', formData);
         setSuccessMessage('Файл успешно загружен!');
         setFile(null);  // Reset file input
         setComment('');  // Reset comment input
