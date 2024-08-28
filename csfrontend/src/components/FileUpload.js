@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import axiosInstance from '../axiosConfig';
 
-
 function FileUpload() {
     const [file, setFile] = useState(null);
     const [comment, setComment] = useState('');
@@ -17,7 +16,7 @@ function FileUpload() {
         setComment(e.target.value);
     };
 
-    const handleSubmit = async (e) => {
+const handleSubmit = async (e) => {
     e.preventDefault();
     setSuccessMessage('');
     setErrorMessage('');
@@ -30,13 +29,15 @@ function FileUpload() {
     }
 
     const formData = new FormData();
-    formData.append('file', file);  // Make sure the file is correctly appended
+    formData.append('file', file);
+    formData.append('original_name', file.name);  // Explicitly set original_name
+    formData.append('size', file.size);  // Explicitly set size
     formData.append('comment', comment);
 
     try {
         const res = await axiosInstance.post('/api/storage/upload/', formData, {
             headers: {
-                'Content-Type': 'multipart/form-data',  // Ensure multipart/form-data is used for file uploads
+                'Content-Type': 'multipart/form-data',
             },
         });
         setSuccessMessage('Файл успешно загружен!');
