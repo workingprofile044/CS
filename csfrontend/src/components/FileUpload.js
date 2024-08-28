@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import axiosInstance from '../axiosConfig';
 
 function FileUpload() {
     const [file, setFile] = useState(null);
@@ -28,10 +29,7 @@ const handleSubmit = async (e) => {
     }
 
     const formData = new FormData();
-    formData.append('file', file);
-    formData.append('original_name', file.name);  // Explicitly set original_name
-    formData.append('size', file.size);  // Explicitly set size
-    formData.append('comment', comment);
+    formData.append('file', file);  // Only append the file, no other fields
 
     try {
         const response = await fetch('http://89.111.175.161:8000/api/storage/upload/', {
