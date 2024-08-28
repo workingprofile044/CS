@@ -16,7 +16,7 @@ function FileUpload() {
         setComment(e.target.value);
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
         setSuccessMessage('');
         setErrorMessage('');
@@ -26,26 +26,21 @@ function FileUpload() {
         formData.append('file', file);
         formData.append('comment', comment);
 
-        axiosInstance
-            .post('api/storage/upload/', formData)
-            .then((res) => {
-                setSuccessMessage('Your file has been uploaded successfully!');
-                setErrorMessage('');
-                console.log('File uploaded successfully:', res.data);
-                setFile(null);  // Reset file input
-                setComment('');  // Reset comment input
-            })
-            .catch((err) => {
-                setSuccessMessage('');
-                const errorMessage = err.response && err.response.data && err.response.data.detail
-                    ? err.response.data.detail
-                    : 'Failed to upload your file. Please try again.';
-                setErrorMessage(errorMessage);
-                console.error('File upload error:', err.response ? err.response : err);
-            })
-            .finally(() => {
-                setIsUploading(false);
-            });
+        try {
+            const res = await axiosInstance.post('/api/storage/upload/', formData);
+            setSuccessMessage('Your file has been uploaded successfully!');
+            setFile(null);  // Reset file input
+            setComment('');  // Reset comment input
+            console.log('File uploaded successfully:', res.data);
+        } catch (err) {
+            const errorMessage = err.response && err.response.data && err.response.data.detail
+                ? err.response.data.detail
+                : 'Failed to upload your file. Please try again.';
+            setErrorMessage(errorMessage);
+            console.error('File upload error:', err.response ? err.response : err);
+        } finally {
+            setIsUploading(false);
+        }
     };
 
     return (
