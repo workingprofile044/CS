@@ -44,7 +44,6 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'django.core.files.uploadhandler.TemporaryFileUploadHandler',
 ]
 
 ROOT_URLCONF = 'CSbackend.urls'
@@ -65,7 +64,6 @@ TEMPLATES = [
     },
 ]
 
-DATA_UPLOAD_MAX_MEMORY_SIZE = 5242880
 
 WSGI_APPLICATION = 'CSbackend.wsgi.application'
 
