@@ -9,7 +9,7 @@ from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.http import FileResponse, Http404
 from rest_framework.decorators import api_view, permission_classes
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.parsers import MultiPartParser, FormParser
 
 logger = logging.getLogger(__name__)
@@ -23,16 +23,13 @@ class FileListView(generics.ListAPIView):
         return File.objects.filter(user=self.request.user)
 
 
-from rest_framework.parsers import MultiPartParser, FormParser
-
 class FileUploadView(generics.CreateAPIView):
     serializer_class = FileSerializer
     parser_classes = (MultiPartParser, FormParser)
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [AllowAny]
 
     def perform_create(self, serializer):
         file_obj = self.request.data.get('file')
-
         if not file_obj:
             raise ValidationError("No file provided.")
 
