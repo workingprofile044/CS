@@ -37,8 +37,10 @@ class FileUploadView(generics.CreateAPIView):
             raise ValidationError("No file provided.")  # Using DRF's ValidationError
 
         user = request.user
-        file_path = os.path.join(settings.MEDIA_ROOT, user.username, file_obj.name)
-        os.makedirs(os.path.dirname(file_path), exist_ok=True)
+        user_folder = os.path.join(settings.MEDIA_ROOT, user.username)
+        os.makedirs(user_folder, exist_ok=True)
+
+        file_path = os.path.join(user_folder, file_obj.name)
 
         with default_storage.open(file_path, 'wb+') as destination:
             for chunk in file_obj.chunks():
@@ -53,11 +55,7 @@ class FileUploadView(generics.CreateAPIView):
         )
 
         serializer = self.get_serializer(file_record)
-        download_url = request.build_absolute_uri(f'/api/storage/download/{file_record.id}/')
-        response_data = serializer.data
-        response_data['download_url'] = download_url
-
-        return Response(response_data, status=status.HTTP_201_CREATED)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 class FileDeleteView(APIView):
     permission_classes = [permissions.IsAuthenticated]
