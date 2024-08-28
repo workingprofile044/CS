@@ -1,3 +1,7 @@
+import React, { useState } from 'react';
+import axiosInstance from '../axiosConfig';
+
+
 function FileUpload() {
     const [file, setFile] = useState(null);
     const [comment, setComment] = useState('');
