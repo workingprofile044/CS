@@ -9,7 +9,6 @@ from rest_framework.permissions import IsAuthenticated
 from django.core.files.storage import default_storage
 from django.conf import settings
 from rest_framework.response import Response
-from rest_framework.exceptions import ValidationError
 from rest_framework.parsers import MultiPartParser, FormParser
 from .models import File
 from .serializers import FileSerializer
@@ -24,44 +23,32 @@ class FileListView(generics.ListAPIView):
         logger.info(f"Fetching file list for user: {self.request.user}")
         return File.objects.filter(user=self.request.user)
 
-
-class FileUploadView(generics.CreateAPIView):
-    serializer_class = FileSerializer
+# Simplified File Upload View
+class SimpleFileUploadView(APIView):
     parser_classes = (MultiPartParser, FormParser)
     permission_classes = [permissions.IsAuthenticated]
 
-    def perform_create(self, serializer):
-        file_obj = self.request.data.get('file')
+    def post(self, request, *args, **kwargs):
+        file_obj = request.data.get('file')
 
         if not file_obj:
-            raise ValidationError("No file provided.")
+            return Response({"error": "No file provided."}, status=status.HTTP_400_BAD_REQUEST)
 
-        # Extract fields if they are not provided
-        original_name = self.request.data.get('original_name', file_obj.name)
-        size = self.request.data.get('size', file_obj.size)
-        user = self.request.user
-
-        # Optional comment
-        comment = self.request.data.get('comment', '')
+        # Log the file details
+        logger.info(f"Uploading file: {file_obj.name} for user: {request.user.username}")
 
         # Save the file to the filesystem
-        file_path = os.path.join(settings.MEDIA_ROOT, user.username, original_name)
+        file_path = os.path.join(settings.MEDIA_ROOT, request.user.username, file_obj.name)
         os.makedirs(os.path.dirname(file_path), exist_ok=True)
 
         with default_storage.open(file_path, 'wb+') as destination:
             for chunk in file_obj.chunks():
                 destination.write(chunk)
 
-        # Save the metadata to the database
-        serializer.save(
-            user=user,
-            original_name=original_name,
-            size=size,
-            comment=comment,
-            file_path=file_path,
-        )
+        # You can add more logic here to save file details to the database if needed
 
         return Response({"detail": "File uploaded successfully."}, status=status.HTTP_201_CREATED)
+
 class FileDeleteView(APIView):
     permission_classes = [permissions.IsAuthenticated]
 
