@@ -12,7 +12,6 @@ from django.http import FileResponse, Http404
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
 
-# Initialize logging
 logger = logging.getLogger(__name__)
 
 class FileListView(generics.ListAPIView):
@@ -30,7 +29,6 @@ class FileUploadView(generics.CreateAPIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def perform_create(self, serializer):
-        # Extract the file object from the request
         file_obj = self.request.data.get('file')
 
         if not file_obj:
