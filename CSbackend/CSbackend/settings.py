@@ -44,6 +44,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'django.core.files.uploadhandler.TemporaryFileUploadHandler',
 ]
 
 ROOT_URLCONF = 'CSbackend.urls'
