@@ -10,10 +10,12 @@ function FileUpload() {
 
     const handleFileChange = (e) => {
         setFile(e.target.files[0]);
+        console.log('Selected file:', e.target.files[0]);
     };
 
     const handleCommentChange = (e) => {
         setComment(e.target.value);
+        console.log('Comment:', e.target.value);
     };
 
     const handleSubmit = (e) => {
@@ -26,8 +28,13 @@ function FileUpload() {
         formData.append('file', file);
         formData.append('comment', comment);
 
+        console.log('FormData before sending:', {
+            file: file,
+            comment: comment,
+        });
+
         axiosInstance
-            .post('api/storage/upload/', formData)
+            .post('/api/storage/upload/', formData)
             .then((res) => {
                 setSuccessMessage('Your file has been uploaded successfully!');
                 setErrorMessage('');
