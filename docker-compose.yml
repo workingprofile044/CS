@@ -6,8 +6,8 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data/
     environment:
-      POSTGRES_DB: csdb1
-      POSTGRES_USER: csadmin
+      POSTGRES_DB: csdb
+      POSTGRES_USER: csuser
       POSTGRES_PASSWORD: cspass
 
   web:
@@ -24,7 +24,7 @@ services:
       - db
     environment:
       - SECRET_KEY=ul6v3gtio3_&m&%oelcb6(+t=-fbj2ovv(9-8+8ekta(sjtxc&
-      - DATABASE_URL=postgres://csadmin:cspass@db:5432/csdb1
+      - DATABASE_URL=postgres://csuser:cspass@db:5432/csdb
       - DEBUG=1
 
   frontend:
