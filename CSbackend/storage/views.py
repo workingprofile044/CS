@@ -2,15 +2,17 @@ import os
 import logging
 from rest_framework import generics, permissions, status
 from rest_framework.views import APIView
-from rest_framework.response import Response
-from .models import File
-from .serializers import FileSerializer
-from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.http import FileResponse, Http404
 from rest_framework.decorators import api_view, permission_classes
-from rest_framework.permissions import IsAuthenticated, AllowAny
+from rest_framework.permissions import IsAuthenticated
+from django.core.files.storage import default_storage
+from django.conf import settings
+from rest_framework.response import Response
+from rest_framework.exceptions import ValidationError
 from rest_framework.parsers import MultiPartParser, FormParser
+from .models import File
+from .serializers import FileSerializer
 
 logger = logging.getLogger(__name__)
 
@@ -26,35 +28,40 @@ class FileListView(generics.ListAPIView):
 class FileUploadView(generics.CreateAPIView):
     serializer_class = FileSerializer
     parser_classes = (MultiPartParser, FormParser)
-    permission_classes = [AllowAny]
+    permission_classes = [permissions.IsAuthenticated]
 
     def perform_create(self, serializer):
         file_obj = self.request.data.get('file')
+
         if not file_obj:
             raise ValidationError("No file provided.")
 
+        # Extract fields if they are not provided
+        original_name = self.request.data.get('original_name', file_obj.name)
+        size = self.request.data.get('size', file_obj.size)
         user = self.request.user
-        file_path = os.path.join(settings.MEDIA_ROOT, user.username, file_obj.name)
 
-        logger.info(f"Uploading file '{file_obj.name}' for user '{user.username}'.")
+        # Optional comment
+        comment = self.request.data.get('comment', '')
 
+        # Save the file to the filesystem
+        file_path = os.path.join(settings.MEDIA_ROOT, user.username, original_name)
         os.makedirs(os.path.dirname(file_path), exist_ok=True)
 
-        with open(file_path, 'wb+') as destination:
+        with default_storage.open(file_path, 'wb+') as destination:
             for chunk in file_obj.chunks():
                 destination.write(chunk)
 
-        logger.info(f"File saved to '{file_path}'.")
-
+        # Save the metadata to the database
         serializer.save(
             user=user,
-            original_name=file_obj.name,
+            original_name=original_name,
+            size=size,
+            comment=comment,
             file_path=file_path,
-            size=file_obj.size,
-            comment=self.request.data.get('comment', ''),
         )
-        logger.info(f"File details saved in database for file '{file_obj.name}'.")
 
+        return Response({"detail": "File uploaded successfully."}, status=status.HTTP_201_CREATED)
 class FileDeleteView(APIView):
     permission_classes = [permissions.IsAuthenticated]
 
